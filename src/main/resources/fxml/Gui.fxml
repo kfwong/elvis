@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1">
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="50.0" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="login" mnemonicParsing="false" text="Login" />
+                <Button fx:id="forceDownload" mnemonicParsing="false" text="Force Download" />
+                <Button fx:id="exit" mnemonicParsing="false" text="Exit" />
+            </children>
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
+    <center>
+          <TextArea fx:id="messageLog" editable="false" prefHeight="650.0" prefWidth="200.0">
+              <font>
+                  <Font size="10.0" />
+              </font>
+          </TextArea>
+    </center>
+</BorderPane>
