@@ -14,7 +14,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
     val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
 
     fun forceDownloadWorkbins() {
-        eventBus.post(MessageLogEvent("Running force download for all workbins."))
+        eventBus.post(MessageLogEvent("Running force download for all workbins..."))
 
         object : Thread() {
             override fun run() {
@@ -35,10 +35,12 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                             }
                         }, { error ->
                             println(error)
+                            System.exit(1)
                         })
                     }
                 }, { error ->
                     println(error)
+                    System.exit(1)
                 })
             }
         }.start()
@@ -50,8 +52,8 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
             createFolder(subFolderPath)
 
             it.files.forEach {
-                eventBus.post(MessageLogEvent("Downloading ${it.name}"))
                 lapi.download(it.id, it.name, subFolderPath)
+                eventBus.post(MessageLogEvent("***** Downloaded ${it.name}"))
             }
 
             downloadFiles(it.folders, subFolderPath)
@@ -64,7 +66,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
 
         if (!destinationDir.exists()) {
             if (!destinationDir.mkdir()) {
-                eventBus.post(MessageLogEvent("Failed to create directory at ${destinationDir}!"))
+                eventBus.post(MessageLogEvent("[ERROR] Failed to create directory at $destinationDir!"))
             }
         }
     }
