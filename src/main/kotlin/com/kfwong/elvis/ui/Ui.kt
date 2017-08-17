@@ -7,7 +7,7 @@ import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.util.API_KEY
 import com.kfwong.elvis.util.prefs
 import com.kfwong.elvis.util.eventBus
-import javafx.beans.property.StringProperty
+import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 import javafx.scene.layout.BorderPane
@@ -30,6 +30,7 @@ class Gui : View() {
     override val root: BorderPane by fxml("/fxml/Gui.fxml")
 
     val login: Button by fxid()
+    val download: Button by fxid()
     val forceDownload: Button by fxid()
     val messageLog: TextArea by fxid()
     val exit: Button by fxid()
@@ -45,6 +46,24 @@ class Gui : View() {
             find(Login::class).openModal()
         }
 
+        download.action {
+            val ELVIS_HOME: String = prefs.get("ELVIS_HOME", System.getProperty("user.home") + "/elvis/")
+            val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
+
+            if (AUTH_TOKEN != "(not set)") {
+                login.disableProperty().set(true)
+                forceDownload.disableProperty().set(true)
+
+                controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
+                controller.download()
+
+                login.disableProperty().set(false)
+                forceDownload.disableProperty().set(false)
+            } else {
+                eventBus.post(MessageLogEvent("You must login with your NUSNET account first!"))
+            }
+        }
+
         forceDownload.action {
             val ELVIS_HOME: String = prefs.get("ELVIS_HOME", System.getProperty("user.home") + "/elvis/")
             val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
@@ -54,7 +73,7 @@ class Gui : View() {
                 forceDownload.disableProperty().set(true)
 
                 controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
-                controller.forceDownloadWorkbins()
+                controller.download(true)
 
                 login.disableProperty().set(false)
                 forceDownload.disableProperty().set(false)
@@ -71,7 +90,10 @@ class Gui : View() {
 
     @Subscribe
     fun handleMessageLogEvent(messageLogEvent: MessageLogEvent) {
-        messageLog.text += "$messageLogEvent\n"
+        Platform.runLater({
+            messageLog.text += "$messageLogEvent\n"
+            messageLog.positionCaret(messageLog.text.length)
+        })
     }
 }
 
