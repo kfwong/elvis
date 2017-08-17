@@ -2,9 +2,12 @@ package com.kfwong.elvis.event
 
 import java.util.*
 
-class MessageLogEvent(message: String) {
+class MessageLogEvent(message: String) : BaseEvent() {
 
-    val datetime = Date()
-    val content = message
+    private val m = message
+
+    override fun toString(): String {
+        return prefix() + m
+    }
 
 }

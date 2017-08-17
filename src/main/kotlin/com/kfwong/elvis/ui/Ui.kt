@@ -7,6 +7,7 @@ import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.util.API_KEY
 import com.kfwong.elvis.util.prefs
 import com.kfwong.elvis.util.eventBus
+import javafx.beans.property.StringProperty
 import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 import javafx.scene.layout.BorderPane
@@ -36,6 +37,8 @@ class Gui : View() {
     lateinit var controller: ElvisController
 
     init {
+        this.title = "elvis"
+
         eventBus.register(this)
 
         login.action {
@@ -49,8 +52,12 @@ class Gui : View() {
             if (AUTH_TOKEN != "(not set)") {
                 login.disableProperty().set(true)
                 forceDownload.disableProperty().set(true)
+
                 controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
                 controller.forceDownloadWorkbins()
+
+                login.disableProperty().set(false)
+                forceDownload.disableProperty().set(false)
             } else {
                 eventBus.post(MessageLogEvent("You must login with your NUSNET account first!"))
             }
@@ -64,7 +71,7 @@ class Gui : View() {
 
     @Subscribe
     fun handleMessageLogEvent(messageLogEvent: MessageLogEvent) {
-        messageLog.text += "[${messageLogEvent.datetime}] ${messageLogEvent.content}\n"
+        messageLog.text += "$messageLogEvent\n"
     }
 }
 
@@ -78,6 +85,7 @@ class Login : View() {
     val loginUrl = "https://ivle.nus.edu.sg/api/login/?apikey=$API_KEY&url=https://localhost/"
 
     init {
+        this.title = "login"
 
         webView.engine.locationProperty().onChange {
             if (it!!.indexOf(paramName) > 0) {
