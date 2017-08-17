@@ -16,25 +16,32 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
     fun forceDownloadWorkbins() {
         eventBus.post(MessageLogEvent("Running force download for all workbins."))
 
-        lapi.modules().fold({ m ->
-            m.modules.forEach {
+        object : Thread() {
+            override fun run() {
+                createFolder(ELVIS_HOME)
 
-                val moduleFolderPath = ELVIS_HOME + it.code.toUpperCase() + " " + it.name.toUpperCase() + "/"
-                createFolder(moduleFolderPath)
+                lapi.modules().fold({ m ->
 
-                lapi.workbins(it.id).fold({ w ->
-                    w.workbins.forEach {
-                        downloadFiles(it.folders, moduleFolderPath)
+                    m.modules.forEach {
+
+                        val moduleFolderPath = ELVIS_HOME + it.code.toUpperCase() + " " + it.name.toUpperCase() + "/"
+                        createFolder(moduleFolderPath)
+
+                        eventBus.post(MessageLogEvent("Downloading files for ${it.name}..."))
+
+                        lapi.workbins(it.id).fold({ w ->
+                            w.workbins.forEach {
+                                downloadFiles(it.folders, moduleFolderPath)
+                            }
+                        }, { error ->
+                            println(error)
+                        })
                     }
                 }, { error ->
                     println(error)
-                    //eventBus.post(MessageLogEvent(error.response.httpResponseMessage))
                 })
             }
-        }, { error ->
-            println(error)
-            //eventBus.post(MessageLogEvent(error.response.httpResponseMessage))
-        })
+        }.start()
     }
 
     private fun downloadFiles(folders: Collection<Folder>, destDir: String) {
@@ -43,22 +50,12 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
             createFolder(subFolderPath)
 
             it.files.forEach {
-
-                lapi.download(it.id, it.name, subFolderPath).destination { response, url ->
-                    createFolder(subFolderPath)
-
-                    File(subFolderPath + it.name)
-                }.progress { readBytes, totalBytes ->
-                    /*
-                    val progress = readBytes / totalBytes
-                    println(progress)
-                    */
-                }.response { request, response, result ->
-                    eventBus.post(MessageLogEvent("Downloaded ${it.name} to $subFolderPath."))
-                }
+                eventBus.post(MessageLogEvent("Downloading ${it.name}"))
+                lapi.download(it.id, it.name, subFolderPath)
             }
 
             downloadFiles(it.folders, subFolderPath)
+
         }
     }
 

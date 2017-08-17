@@ -4,6 +4,9 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.result.Result
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import java.io.FileOutputStream
 import java.io.File as File
 
 class Lapi(apiKey: String, authToken: String, downloadDir: String) {
@@ -40,14 +43,15 @@ class Lapi(apiKey: String, authToken: String, downloadDir: String) {
         return Fuel.get(WORKBIN_ENDPOINT, WORKBIN_PARAMS).responseObject(Workbins.Deserializer()).third
     }
 
-    fun download(fileId: String, fileName: String, fileDir: String = ELVIS_HOME, target: String = "workbin"): Request {
-        val FILE_DOWNLOAD_PARAMS = listOf(
-                "APIKey" to API_KEY,
-                "AuthToken" to AUTH_TOKEN,
-                "ID" to fileId,
-                "target" to target
-        )
+    fun download(fileId: String, fileName: String, fileDir: String = ELVIS_HOME, target: String = "workbin") {
+        val client = OkHttpClient()
+        val request = okhttp3.Request.Builder()
+                .url("$FILE_DOWNLOAD_ENDPOINT?APIKey=$API_KEY&AuthToken=$AUTH_TOKEN&ID=$fileId&target=$target")
+                .build()
+        val response = client.newCall(request).execute()
 
-        return Fuel.download(FILE_DOWNLOAD_ENDPOINT, FILE_DOWNLOAD_PARAMS)
+        val fos = FileOutputStream("$fileDir$fileName")
+        fos.write(response.body()?.bytes())
+        fos.close()
     }
 }
