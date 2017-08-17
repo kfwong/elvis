@@ -2,6 +2,7 @@ package com.kfwong.elvis.lapi
 
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelError
+import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.result.Result
 import okhttp3.OkHttpClient

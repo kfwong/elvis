@@ -2,6 +2,7 @@ package com.kfwong.elvis.lapi
 
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import java.io.Reader
 import java.util.*
@@ -11,7 +12,7 @@ data class Workbins(
         val workbins: Collection<Workbin>
 ) {
     class Deserializer : ResponseDeserializable<Workbins> {
-        override fun deserialize(reader: Reader) = Gson().fromJson(reader, Workbins::class.java)
+        override fun deserialize(reader: Reader) = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").create().fromJson(reader, Workbins::class.java)
     }
 }
 
@@ -75,5 +76,6 @@ data class File(
 ) {
     class Deserializer : ResponseDeserializable<File> {
         override fun deserialize(reader: Reader) = Gson().fromJson(reader, File::class.java)
+        //override fun deserialize(reader: Reader) = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssX").create().fromJson(reader, File::class.java)
     }
 }

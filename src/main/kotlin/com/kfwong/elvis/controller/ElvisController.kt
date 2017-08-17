@@ -4,6 +4,7 @@ import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.lapi.Folder
 import com.kfwong.elvis.lapi.Lapi
 import com.kfwong.elvis.util.eventBus
+import com.kfwong.elvis.util.prefs
 import java.io.File
 
 class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
@@ -13,7 +14,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
 
     val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
 
-    fun forceDownloadWorkbins() {
+    fun download(isForceDownload:Boolean = false) {
         eventBus.post(MessageLogEvent("Running force download for all workbins..."))
 
         object : Thread() {
@@ -31,7 +32,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
 
                         lapi.workbins(it.id).fold({ w ->
                             w.workbins.forEach {
-                                downloadFiles(it.folders, moduleFolderPath)
+                                downloadFiles(it.folders, moduleFolderPath, isForceDownload)
                             }
                         }, { error ->
                             println(error)
@@ -46,14 +47,22 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
         }.start()
     }
 
-    private fun downloadFiles(folders: Collection<Folder>, destDir: String) {
+    private fun downloadFiles(folders: Collection<Folder>, destDir: String, isForceDownload: Boolean = false) {
         folders.forEach {
             val subFolderPath = destDir + it.name + "/"
             createFolder(subFolderPath)
 
             it.files.forEach {
-                lapi.download(it.id, it.name, subFolderPath)
-                eventBus.post(MessageLogEvent("***** Downloaded ${it.name}"))
+                val datetimeUploaded = prefs.get(it.id, null)
+
+                if (it.datetimeUploaded.toString() == datetimeUploaded && !isForceDownload) {
+                    eventBus.post(MessageLogEvent("***** Skipped ${it.name}. It is the latest copy!"))
+                } else {
+                    prefs.put(it.id, it.datetimeUploaded.toString())
+                    lapi.download(it.id, it.name, subFolderPath)
+                    eventBus.post(MessageLogEvent("***** Downloaded ${it.name}"))
+                }
+
             }
 
             downloadFiles(it.folders, subFolderPath)
