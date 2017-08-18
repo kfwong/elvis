@@ -15,15 +15,17 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
     val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
 
     fun download(isForceDownload:Boolean = false) {
-        if (isForceDownload) {
-            eventBus.post(MessageLogEvent("Running force download for all workbins..."))
-        } else {
-            eventBus.post(MessageLogEvent("Downloading files for all workbins..."))
-        }
 
         object : Thread() {
             override fun run() {
                 createFolder(ELVIS_HOME)
+                eventBus.post(MessageLogEvent("Files will be downloaded to $ELVIS_HOME"))
+
+                if (isForceDownload) {
+                    eventBus.post(MessageLogEvent("Running force download for all workbins..."))
+                } else {
+                    eventBus.post(MessageLogEvent("Downloading files for all workbins..."))
+                }
 
                 lapi.modules().fold({ m ->
 
@@ -48,6 +50,8 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                     println(error)
                     System.exit(1)
                 })
+
+                eventBus.post(MessageLogEvent("Download finished!"))
             }
         }.start()
     }
