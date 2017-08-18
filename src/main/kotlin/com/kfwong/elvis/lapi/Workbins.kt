@@ -45,7 +45,7 @@ data class Folder(
         val files: Collection<File>,
 
         @SerializedName("FileCount")
-        val fileCount: Integer
+        val fileCount: Int
 ) {
     class Deserializer : ResponseDeserializable<Folder> {
         override fun deserialize(reader: Reader) = Gson().fromJson(reader, Folder::class.java)
