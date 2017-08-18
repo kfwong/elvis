@@ -74,7 +74,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
 
             }
 
-            downloadFiles(it.folders, subFolderPath)
+            downloadFiles(it.folders, subFolderPath, isForceDownload)
 
         }
     }
