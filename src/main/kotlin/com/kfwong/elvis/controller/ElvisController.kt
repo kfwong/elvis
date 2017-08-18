@@ -24,8 +24,8 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                 lapi.modules().fold({ m ->
 
                     m.modules.forEach {
-
-                        val moduleFolderPath = ELVIS_HOME + it.code.toUpperCase() + " " + it.name.toUpperCase() + "/"
+                        val code = it.code.replace('/','-')
+                        val moduleFolderPath = ELVIS_HOME + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
                         createFolder(moduleFolderPath)
 
                         eventBus.post(MessageLogEvent("Downloading files for ${it.name}..."))
