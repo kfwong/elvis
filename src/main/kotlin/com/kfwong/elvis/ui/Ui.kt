@@ -1,6 +1,7 @@
 package com.kfwong.elvis.ui
 
 import com.google.common.eventbus.Subscribe
+import com.kfwong.elvis.controller.DirectoryController
 import com.kfwong.elvis.controller.ElvisController
 import com.kfwong.elvis.controller.LoginController
 import com.kfwong.elvis.event.MessageLogEvent
@@ -9,11 +10,14 @@ import com.kfwong.elvis.util.prefs
 import com.kfwong.elvis.util.eventBus
 import javafx.application.Platform
 import javafx.scene.control.Button
+import javafx.scene.control.Label
 import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import tornadofx.*
+import java.io.File
 
 class Ui : App() {
     override val primaryView = Gui::class
@@ -32,6 +36,7 @@ class Gui : View() {
     val login: Button by fxid()
     val download: Button by fxid()
     val forceDownload: Button by fxid()
+    val changeDirectory: Button by fxid()
     val messageLog: TextArea by fxid()
     val exit: Button by fxid()
 
@@ -82,6 +87,10 @@ class Gui : View() {
             }
         }
 
+        changeDirectory.action {
+            find(ChangeDirectory::class).openModal()
+        }
+
         exit.action {
             System.exit(0)
         }
@@ -125,5 +134,35 @@ class Login : View() {
 
         webView.engine.load(loginUrl)
 
+    }
+}
+
+class ChangeDirectory: View() {
+    override val root: VBox by fxml("/fxml/ChangeDirectory.fxml")
+
+    val controller = DirectoryController()
+
+    val directoryPath: TextField by fxid()
+    val directorySubmit: Button by fxid()
+    val directoryPathError: Label by fxid()
+
+    init {
+        this.title = "changeDirectory"
+
+        directorySubmit.action {
+            val directory: String = directoryPath.text
+            val path = File(directory)
+
+            if (path.exists()) {
+                controller.saveElvisHome(directoryPath.text + "/")
+
+                directoryPathError.text = ""
+                eventBus.post(MessageLogEvent("Directory changed successfully."))
+
+                this.close()
+            } else {
+                directoryPathError.text = "Invalid Path"
+            }
+        }
     }
 }
