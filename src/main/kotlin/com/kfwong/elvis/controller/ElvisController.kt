@@ -15,17 +15,23 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
     val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
 
     fun download(isForceDownload:Boolean = false) {
-        eventBus.post(MessageLogEvent("Running force download for all workbins..."))
 
         object : Thread() {
             override fun run() {
                 createFolder(ELVIS_HOME)
+                eventBus.post(MessageLogEvent("Files will be downloaded to $ELVIS_HOME"))
+
+                if (isForceDownload) {
+                    eventBus.post(MessageLogEvent("Running force download for all workbins..."))
+                } else {
+                    eventBus.post(MessageLogEvent("Downloading files for all workbins..."))
+                }
 
                 lapi.modules().fold({ m ->
 
                     m.modules.forEach {
-
-                        val moduleFolderPath = ELVIS_HOME + it.code.toUpperCase() + " " + it.name.toUpperCase() + "/"
+                        val code = it.code.replace('/','-')
+                        val moduleFolderPath = ELVIS_HOME + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
                         createFolder(moduleFolderPath)
 
                         eventBus.post(MessageLogEvent("Downloading files for ${it.name}..."))
@@ -34,6 +40,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                             w.workbins.forEach {
                                 downloadFiles(it.folders, moduleFolderPath, isForceDownload)
                             }
+                            eventBus.post(MessageLogEvent("All files downloaded for ${it.name}."))
                         }, { error ->
                             println(error)
                             System.exit(1)
@@ -43,6 +50,8 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                     println(error)
                     System.exit(1)
                 })
+
+                eventBus.post(MessageLogEvent("Download finished!"))
             }
         }.start()
     }
@@ -65,7 +74,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
 
             }
 
-            downloadFiles(it.folders, subFolderPath)
+            downloadFiles(it.folders, subFolderPath, isForceDownload)
 
         }
     }

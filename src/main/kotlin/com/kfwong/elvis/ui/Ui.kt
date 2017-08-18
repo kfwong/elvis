@@ -27,6 +27,11 @@ class Ui : App() {
 
         eventBus.post(MessageLogEvent("Welcome to ELVIS!"))
         eventBus.post(MessageLogEvent("Application started."))
+
+        val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
+        if (AUTH_TOKEN != "(not set)") {
+            eventBus.post(MessageLogEvent("User has login"))
+        }
     }
 }
 
