@@ -58,8 +58,6 @@ class WorkbinsSpec : BehaviorSpec() {
                     file.name shouldBe "Ch1-numerI.pdf"
                     file.description shouldBe "MA2213-Chapter 1"
                     file.type shouldBe "pdf"
-                    file.size.toString().trim() shouldBe "330366"
-                    file.datetimeUploaded.toString().trim() shouldBe "Fri Aug 11 11:10:46 SGT 2017"
                     file.isDownloaded shouldBe true
                 }
             }
