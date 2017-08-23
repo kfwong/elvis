@@ -1,0 +1,149 @@
+{
+  "Results": [
+    {
+      "ID": "97c50740-8e6b-4f0e-bc3a-2712a9ea618c",
+      "Title": "NUMERICAL ANALYSIS I",
+      "Creator": {
+        "UserID": "matchudl",
+        "Name": "Chu Delin",
+        "Email": null,
+        "Title": null,
+        "UserGuid": "0ddd0fab-bea3-4f63-b50a-167cf4c34d3c",
+        "AccountType": null,
+        "Photo": null
+      },
+      "Published": true,
+      "BadgeTool": 1,
+      "Folders": [
+        {
+          "ID": "9fb57f0d-27bb-4d88-a6c2-553405a77814",
+          "FolderName": "Lecture Notes",
+          "SortFilesBy": "Date",
+          "OpenDate": "\/Date(1502418780000+0800)\/",
+          "OpenDate_js": "2017-08-11T10:33:00",
+          "CloseDate": "\/Date(1518316380000+0800)\/",
+          "CloseDate_js": "2018-02-11T10:33:00",
+          "AllowUpload": false,
+          "AllowView": false,
+          "CommentOption": "1",
+          "FolderOrder": 1,
+          "FileCount": 3,
+          "UploadDisplayOption": "Name",
+          "Folders": [],
+          "Files": [
+            {
+              "ID": "66c7c5d3-a504-4dd7-9046-d4d30b3a10a1",
+              "FileName": "Ch1-numerI.pdf",
+              "FileDescription": "MA2213-Chapter 1",
+              "FileSize": 330366.0,
+              "FileType": "pdf",
+              "FileRemarks": "",
+              "FileRemarksAttachment": "",
+              "Commenter": {
+                "UserID": null,
+                "Name": null,
+                "Email": null,
+                "Title": null,
+                "UserGuid": "00000000-0000-0000-0000-000000000000",
+                "AccountType": null,
+                "Photo": null
+              },
+              "Creator": {
+                "UserID": "matchudl",
+                "Name": "Chu Delin",
+                "Email": null,
+                "Title": null,
+                "UserGuid": "0ddd0fab-bea3-4f63-b50a-167cf4c34d3c",
+                "AccountType": null,
+                "Photo": null
+              },
+              "isDownloaded": true,
+              "UploadTime": "\/Date(1502421046820+0800)\/",
+              "UploadTime_js": "2017-08-11T11:10:46.82"
+            },
+            {
+              "ID": "a156e99f-4c45-4ddf-bc9f-f24c190892b4",
+              "FileName": "Ch2-numerI.pdf",
+              "FileDescription": "MA2213: Chapter 2--NUMERICAL SOLUTION OF\r\nLINEAR SYSTEMS OF EQUATIONS",
+              "FileSize": 213379.0,
+              "FileType": "pdf",
+              "FileRemarks": "",
+              "FileRemarksAttachment": "",
+              "Commenter": {
+                "UserID": null,
+                "Name": null,
+                "Email": null,
+                "Title": null,
+                "UserGuid": "00000000-0000-0000-0000-000000000000",
+                "AccountType": null,
+                "Photo": null
+              },
+              "Creator": {
+                "UserID": "matchudl",
+                "Name": "Chu Delin",
+                "Email": null,
+                "Title": null,
+                "UserGuid": "0ddd0fab-bea3-4f63-b50a-167cf4c34d3c",
+                "AccountType": null,
+                "Photo": null
+              },
+              "isDownloaded": true,
+              "UploadTime": "\/Date(1502419102850+0800)\/",
+              "UploadTime_js": "2017-08-11T10:38:22.85"
+            },
+            {
+              "ID": "5d6c49df-40f7-47e8-ae91-bd476cf05d01",
+              "FileName": "Ch0-numerI.pdf",
+              "FileDescription": "Contents of MA2213",
+              "FileSize": 66390.0,
+              "FileType": "pdf",
+              "FileRemarks": "",
+              "FileRemarksAttachment": "",
+              "Commenter": {
+                "UserID": null,
+                "Name": null,
+                "Email": null,
+                "Title": null,
+                "UserGuid": "00000000-0000-0000-0000-000000000000",
+                "AccountType": null,
+                "Photo": null
+              },
+              "Creator": {
+                "UserID": "matchudl",
+                "Name": "Chu Delin",
+                "Email": null,
+                "Title": null,
+                "UserGuid": "0ddd0fab-bea3-4f63-b50a-167cf4c34d3c",
+                "AccountType": null,
+                "Photo": null
+              },
+              "isDownloaded": false,
+              "UploadTime": "\/Date(1502418998573+0800)\/",
+              "UploadTime_js": "2017-08-11T10:36:38.573"
+            }
+          ]
+        },
+        {
+          "ID": "05fdf538-469b-4643-a779-1d7fb9dda7f5",
+          "FolderName": "Tutorials",
+          "SortFilesBy": "Date",
+          "OpenDate": "\/Date(1501516800000+0800)\/",
+          "OpenDate_js": "2017-08-01T00:00:00",
+          "CloseDate": "\/Date(1514044740000+0800)\/",
+          "CloseDate_js": "2017-12-23T23:59:00",
+          "AllowUpload": false,
+          "AllowView": true,
+          "CommentOption": "1",
+          "FolderOrder": 2,
+          "FileCount": 0,
+          "UploadDisplayOption": "Name",
+          "Folders": [],
+          "Files": []
+        }
+      ]
+    }
+  ],
+  "Comments": "",
+  "LastUpdate": "\/Date(1502525597515+0800)\/",
+  "LastUpdate_js": "2017-08-12T16:13:17.5154776+08:00"
+}

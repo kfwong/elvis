@@ -20,7 +20,7 @@ data class Workbin(
         @SerializedName("ID")
         val id: String,
 
-        @SerializedName("com.kfwong.elvis.Title")
+        @SerializedName("Title")
         val title: String,
 
         @SerializedName("Folders")
