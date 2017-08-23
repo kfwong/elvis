@@ -1,15 +1,14 @@
 package com.kfwong.elvis.ui
 
 import com.google.common.eventbus.Subscribe
-import com.kfwong.elvis.controller.DirectoryController
+import com.kfwong.elvis.controller.BaseController
 import com.kfwong.elvis.controller.ElvisController
-import com.kfwong.elvis.controller.LoginController
 import com.kfwong.elvis.event.DownloadCompletedEvent
 import com.kfwong.elvis.event.DownloadingEvent
 import com.kfwong.elvis.event.MessageLogEvent
-import com.kfwong.elvis.util.API_KEY
-import com.kfwong.elvis.util.prefs
-import com.kfwong.elvis.util.eventBus
+import com.kfwong.elvis.util.Constants.API_KEY
+import com.kfwong.elvis.util.Constants.prefs
+import com.kfwong.elvis.util.Constants.eventBus
 import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -40,12 +39,12 @@ class Ui : App() {
 class Gui : View() {
     override val root: BorderPane by fxml("/fxml/Gui.fxml")
 
-    val login: Button by fxid()
-    val download: Button by fxid()
-    val forceDownload: Button by fxid()
-    val changeDirectory: Button by fxid()
-    val messageLog: TextArea by fxid()
-    val exit: Button by fxid()
+    private val login: Button by fxid()
+    private val download: Button by fxid()
+    private val forceDownload: Button by fxid()
+    private val changeDirectory: Button by fxid()
+    private val messageLog: TextArea by fxid()
+    private val exit: Button by fxid()
 
     lateinit var controller: ElvisController
 
@@ -59,37 +58,11 @@ class Gui : View() {
         }
 
         download.action {
-            val ELVIS_HOME: String = prefs.get("ELVIS_HOME", System.getProperty("user.home") + "/elvis/")
-            val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
-
-            if (AUTH_TOKEN != "(not set)") {
-                login.isDisable = true
-                forceDownload.isDisable = true
-
-                controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
-                controller.download()
-
-            } else {
-                eventBus.post(MessageLogEvent("You must login with your NUSNET account first!"))
-            }
+            downloadAction(false)
         }
 
         forceDownload.action {
-            val ELVIS_HOME: String = prefs.get("ELVIS_HOME", System.getProperty("user.home") + "/elvis/")
-            val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
-
-            if (AUTH_TOKEN != "(not set)") {
-                login.disableProperty().set(true)
-                forceDownload.disableProperty().set(true)
-
-                controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
-                controller.download(true)
-
-                login.disableProperty().set(false)
-                forceDownload.disableProperty().set(false)
-            } else {
-                eventBus.post(MessageLogEvent("You must login with your NUSNET account first!"))
-            }
+            downloadAction(true)
         }
 
         changeDirectory.action {
@@ -102,6 +75,18 @@ class Gui : View() {
 
     }
 
+    private fun downloadAction(isForceDownload: Boolean = false){
+        val ELVIS_HOME: String = prefs.get("ELVIS_HOME", System.getProperty("user.home") + "/elvis/")
+        val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
+
+        if (AUTH_TOKEN != "(not set)") {
+            controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
+            controller.download(isForceDownload)
+        } else {
+            controller.publishMessageLogEvent("You must login with your NUSNET account first!")
+        }
+    }
+
     @Subscribe
     fun handleMessageLogEvent(messageLogEvent: MessageLogEvent) {
         Platform.runLater({
@@ -111,7 +96,7 @@ class Gui : View() {
     }
 
     @Subscribe
-    fun handleDownloadingFiles(downloadingEvent: DownloadingEvent){
+    fun handleDownloadingFiles(downloadingEvent: DownloadingEvent) {
         login.isDisable = true
         download.isDisable = true
         forceDownload.isDisable = true
@@ -119,7 +104,7 @@ class Gui : View() {
     }
 
     @Subscribe
-    fun handleDownloadComplete(downloadCompletedEvent: DownloadCompletedEvent){
+    fun handleDownloadComplete(downloadCompletedEvent: DownloadCompletedEvent) {
         login.isDisable = false
         download.isDisable = false
         forceDownload.isDisable = false
@@ -130,11 +115,11 @@ class Gui : View() {
 class Login : View() {
     override val root: VBox by fxml("/fxml/Login.fxml")
 
-    val controller = LoginController()
+    private val webView: WebView by fxid()
+    private val paramName = "token="
+    private val loginUrl = "https://ivle.nus.edu.sg/api/login/?apikey=$API_KEY&url=https://localhost/"
 
-    val webView: WebView by fxid()
-    val paramName = "token="
-    val loginUrl = "https://ivle.nus.edu.sg/api/login/?apikey=$API_KEY&url=https://localhost/"
+    private val controller = BaseController()
 
     init {
         this.title = "login"
@@ -143,9 +128,8 @@ class Login : View() {
             if (it!!.indexOf(paramName) > 0) {
                 val authToken = it.substring(it.indexOf(paramName) + paramName.length)
 
-                controller.saveAuthToken(authToken)
-
-                eventBus.post(MessageLogEvent("Authentication token updated successfully."))
+                controller.setAuthToken(authToken)
+                controller.publishMessageLogEvent("Authentication token updated successfully.")
 
                 this.close()
             }
@@ -158,14 +142,14 @@ class Login : View() {
     }
 }
 
-class ChangeDirectory: View() {
+class ChangeDirectory : View() {
     override val root: VBox by fxml("/fxml/ChangeDirectory.fxml")
 
-    val controller = DirectoryController()
+    private val directoryPath: TextField by fxid()
+    private val directorySubmit: Button by fxid()
+    private val directoryPathError: Label by fxid()
 
-    val directoryPath: TextField by fxid()
-    val directorySubmit: Button by fxid()
-    val directoryPathError: Label by fxid()
+    private val controller = BaseController()
 
     init {
         this.title = "changeDirectory"
@@ -175,10 +159,11 @@ class ChangeDirectory: View() {
             val path = File(directory)
 
             if (path.exists()) {
-                controller.saveElvisHome(directoryPath.text + "/")
+
+                controller.setElvisHome(directoryPath.text + "/")
+                controller.publishMessageLogEvent("Directory changed successfully.")
 
                 directoryPathError.text = ""
-                eventBus.post(MessageLogEvent("Directory changed successfully."))
 
                 this.close()
             } else {

@@ -12,7 +12,7 @@ data class Workbins(
         val workbins: Collection<Workbin>
 ) {
     class Deserializer : ResponseDeserializable<Workbins> {
-        override fun deserialize(reader: Reader) = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").create().fromJson(reader, Workbins::class.java)
+        override fun deserialize(reader: Reader): Workbins = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").create().fromJson(reader, Workbins::class.java)
     }
 }
 
@@ -27,7 +27,7 @@ data class Workbin(
         val folders: Collection<Folder>
 ) {
     class Deserializer : ResponseDeserializable<Workbin> {
-        override fun deserialize(reader: Reader) = Gson().fromJson(reader, Workbin::class.java)
+        override fun deserialize(reader: Reader): Workbin = Gson().fromJson(reader, Workbin::class.java)
     }
 }
 
@@ -48,7 +48,7 @@ data class Folder(
         val fileCount: Int
 ) {
     class Deserializer : ResponseDeserializable<Folder> {
-        override fun deserialize(reader: Reader) = Gson().fromJson(reader, Folder::class.java)
+        override fun deserialize(reader: Reader): Folder = Gson().fromJson(reader, Folder::class.java)
     }
 }
 
@@ -75,7 +75,7 @@ data class File(
         val isDownloaded: Boolean
 ) {
     class Deserializer : ResponseDeserializable<File> {
-        override fun deserialize(reader: Reader) = Gson().fromJson(reader, File::class.java)
+        override fun deserialize(reader: Reader): File = Gson().fromJson(reader, File::class.java)
         //override fun deserialize(reader: Reader) = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssX").create().fromJson(reader, File::class.java)
     }
 }

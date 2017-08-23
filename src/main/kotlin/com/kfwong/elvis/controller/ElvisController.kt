@@ -1,50 +1,46 @@
 package com.kfwong.elvis.controller
 
-import com.kfwong.elvis.event.DownloadCompletedEvent
-import com.kfwong.elvis.event.DownloadingEvent
-import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.lapi.Folder
 import com.kfwong.elvis.lapi.Lapi
-import com.kfwong.elvis.util.eventBus
-import com.kfwong.elvis.util.prefs
+import com.kfwong.elvis.util.Constants.prefs
 import java.io.File
 
-class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
-    val ELVIS_HOME: String = downloadDir
-    val API_KEY = apiKey
-    val AUTH_TOKEN = authToken
+class ElvisController(apiKey: String, authToken: String, downloadDir: String) : BaseController() {
+    private val ELVIS_HOME: String = downloadDir
+    private val API_KEY = apiKey
+    private val AUTH_TOKEN = authToken
 
-    val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
+    private val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
 
-    fun download(isForceDownload:Boolean = false) {
+    fun download(isForceDownload: Boolean = false) {
 
         object : Thread() {
             override fun run() {
                 createFolder(ELVIS_HOME)
 
-                eventBus.post(MessageLogEvent("Files will be downloaded to $ELVIS_HOME"))
-                eventBus.post(DownloadingEvent())
+                publishMessageLogEvent("Files will be downloaded to $ELVIS_HOME")
+                publishDownloadingEvent()
 
                 if (isForceDownload) {
-                    eventBus.post(MessageLogEvent("Running force download for all workbins..."))
+                    publishMessageLogEvent("Running force download for all workbins...")
                 } else {
-                    eventBus.post(MessageLogEvent("Downloading files for all workbins..."))
+                    publishMessageLogEvent("Downloading files for all workbins...")
                 }
 
                 lapi.modules().fold({ m ->
 
                     m.modules.forEach {
-                        val code = it.code.replace('/','-')
+                        val code = it.code.replace('/', '-')
                         val moduleFolderPath = ELVIS_HOME + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
                         createFolder(moduleFolderPath)
 
-                        eventBus.post(MessageLogEvent("Downloading files for ${it.name}..."))
+                        publishMessageLogEvent("Downloading files for ${it.name}...")
 
                         lapi.workbins(it.id).fold({ w ->
                             w.workbins.forEach {
                                 downloadFiles(it.folders, moduleFolderPath, isForceDownload)
                             }
-                            eventBus.post(MessageLogEvent("All files downloaded for ${it.name}."))
+                            publishMessageLogEvent("All files downloaded for ${it.name}.")
                         }, { error ->
                             println(error)
                             System.exit(1)
@@ -55,8 +51,8 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                     System.exit(1)
                 })
 
-                eventBus.post(MessageLogEvent("Download finished!"))
-                eventBus.post(DownloadCompletedEvent())
+                publishMessageLogEvent("Download finished!")
+                publishDownloadCompletedEvent()
             }
         }.start()
     }
@@ -70,11 +66,11 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                 val datetimeUploaded = prefs.get(it.id, null)
 
                 if (it.datetimeUploaded.toString() == datetimeUploaded && !isForceDownload) {
-                    eventBus.post(MessageLogEvent("***** Skipped ${it.name}. It is the latest copy!"))
+                    publishMessageLogEvent("***** Skipped ${it.name}. It is the latest copy!")
                 } else {
                     prefs.put(it.id, it.datetimeUploaded.toString())
                     lapi.download(it.id, it.name, subFolderPath)
-                    eventBus.post(MessageLogEvent("***** Downloaded ${it.name}"))
+                    publishMessageLogEvent("***** Downloaded ${it.name}")
                 }
 
             }
@@ -89,7 +85,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
 
         if (!destinationDir.exists()) {
             if (!destinationDir.mkdir()) {
-                eventBus.post(MessageLogEvent("[ERROR] Failed to create directory at $destinationDir!"))
+                publishMessageLogEvent("[ERROR] Failed to create directory at $destinationDir!")
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.kfwong.elvis
 
 import com.kfwong.elvis.ui.Ui
-import com.kfwong.elvis.util.API_KEY
-import com.kfwong.elvis.util.prefs
+import com.kfwong.elvis.util.Constants.API_KEY
+import com.kfwong.elvis.util.Constants.prefs
 import javafx.application.Application
 
 fun main(args: Array<String>) {
