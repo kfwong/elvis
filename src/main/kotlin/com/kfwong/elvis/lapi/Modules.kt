@@ -10,7 +10,7 @@ data class Modules(
         val modules: Collection<Module>
 ) {
     class Deserializer : ResponseDeserializable<Modules> {
-        override fun deserialize(reader: Reader) = Gson().fromJson(reader, Modules::class.java)
+        override fun deserialize(reader: Reader): Modules = Gson().fromJson(reader, Modules::class.java)
     }
 }
 
@@ -31,6 +31,6 @@ data class Module(
         val year: String
 ) {
     class Deserializer : ResponseDeserializable<Module> {
-        override fun deserialize(reader: Reader) = Gson().fromJson(reader, Module::class.java)
+        override fun deserialize(reader: Reader): Module = Gson().fromJson(reader, Module::class.java)
     }
 }

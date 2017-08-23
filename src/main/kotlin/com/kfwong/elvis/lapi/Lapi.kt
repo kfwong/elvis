@@ -8,14 +8,14 @@ import java.io.FileOutputStream
 import java.io.File as File
 
 class Lapi(apiKey: String, authToken: String, downloadDir: String) {
-    val ELVIS_HOME = downloadDir
-    val API_KEY = apiKey
-    val AUTH_TOKEN = authToken
+    private val ELVIS_HOME = downloadDir
+    private val API_KEY = apiKey
+    private val AUTH_TOKEN = authToken
 
-    val MODULES_ENDPOINT = "https://ivle.nus.edu.sg/api/Lapi.svc/Modules"
-    val WORKBIN_ENDPOINT = "https://ivle.nus.edu.sg/api/Lapi.svc/Workbins"
+    private val MODULES_ENDPOINT = "https://ivle.nus.edu.sg/api/Lapi.svc/Modules"
+    private val WORKBIN_ENDPOINT = "https://ivle.nus.edu.sg/api/Lapi.svc/Workbins"
 
-    val FILE_DOWNLOAD_ENDPOINT = "https://ivle.nus.edu.sg/api/downloadfile.ashx"
+    private val FILE_DOWNLOAD_ENDPOINT = "https://ivle.nus.edu.sg/api/downloadfile.ashx"
 
     fun modules(duration: Long = 0, includeAllInfo: Boolean = false): Result<Modules, FuelError> {
         val MODULES_PARAMS = listOf(

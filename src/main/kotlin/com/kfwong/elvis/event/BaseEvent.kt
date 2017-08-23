@@ -4,12 +4,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 abstract class BaseEvent {
-    val datetime = Date()
+    private val datetime = Date()
+    open val eventMessage = "(no message)"
 
-    protected fun prefix(): String {
+    override fun toString(): String {
 
         val formattedDatetime = SimpleDateFormat("dd MMM yyyy HH:mm:ss").format(datetime)
 
-        return "[$formattedDatetime] "
+        return "[$formattedDatetime] $eventMessage"
     }
 }
