@@ -1,7 +1,5 @@
 package com.kfwong.elvis.event
 
-import java.util.*
-
 class MessageLogEvent(message: String) : BaseEvent() {
 
     private val m = message

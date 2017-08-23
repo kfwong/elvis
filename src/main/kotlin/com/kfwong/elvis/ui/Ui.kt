@@ -4,6 +4,8 @@ import com.google.common.eventbus.Subscribe
 import com.kfwong.elvis.controller.DirectoryController
 import com.kfwong.elvis.controller.ElvisController
 import com.kfwong.elvis.controller.LoginController
+import com.kfwong.elvis.event.DownloadCompletedEvent
+import com.kfwong.elvis.event.DownloadingEvent
 import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.util.API_KEY
 import com.kfwong.elvis.util.prefs
@@ -61,14 +63,12 @@ class Gui : View() {
             val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
 
             if (AUTH_TOKEN != "(not set)") {
-                login.disableProperty().set(true)
-                forceDownload.disableProperty().set(true)
+                login.isDisable = true
+                forceDownload.isDisable = true
 
                 controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
                 controller.download()
 
-                login.disableProperty().set(false)
-                forceDownload.disableProperty().set(false)
             } else {
                 eventBus.post(MessageLogEvent("You must login with your NUSNET account first!"))
             }
@@ -108,6 +108,22 @@ class Gui : View() {
             messageLog.text += "$messageLogEvent\n"
             messageLog.positionCaret(messageLog.text.length)
         })
+    }
+
+    @Subscribe
+    fun handleDownloadingFiles(downloadingEvent: DownloadingEvent){
+        login.isDisable = true
+        download.isDisable = true
+        forceDownload.isDisable = true
+        changeDirectory.isDisable = true
+    }
+
+    @Subscribe
+    fun handleDownloadComplete(downloadCompletedEvent: DownloadCompletedEvent){
+        login.isDisable = false
+        download.isDisable = false
+        forceDownload.isDisable = false
+        changeDirectory.isDisable = false
     }
 }
 
