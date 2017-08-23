@@ -1,6 +1,7 @@
 # ELVIS
 
 ![travis-ci](https://travis-ci.org/kfwong/elvis.svg?branch=master)
+![downloads-count](https://badged.co/kfwong/elvis/total)
 
 ELVIS (IVLE spelled backward with a meaningless 'S') is a batch file downloader for workbins in the IVLE platform. 
 
