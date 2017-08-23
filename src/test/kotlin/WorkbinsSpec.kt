@@ -2,6 +2,7 @@ import com.google.gson.GsonBuilder
 import com.kfwong.elvis.lapi.Workbins
 import io.kotlintest.matchers.*
 import io.kotlintest.specs.BehaviorSpec
+import java.util.*
 
 
 class WorkbinsSpec : BehaviorSpec() {
@@ -51,14 +52,16 @@ class WorkbinsSpec : BehaviorSpec() {
             }
         }
 
-        Given("a file object"){
-            When("accessing any of its member properties"){
-                Then("it should return corresponding value"){
+        Given("a file object") {
+            When("accessing any of its member properties") {
+                Then("it should return corresponding value") {
                     file.id shouldBe "66c7c5d3-a504-4dd7-9046-d4d30b3a10a1"
                     file.name shouldBe "Ch1-numerI.pdf"
                     file.description shouldBe "MA2213-Chapter 1"
                     file.type shouldBe "pdf"
                     file.isDownloaded shouldBe true
+                    file.datetimeUploaded should beInstanceOf(Date::class)
+                    file.size should beGreaterThan(0L)
                 }
             }
         }
