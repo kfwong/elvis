@@ -1,5 +1,7 @@
 package com.kfwong.elvis.controller
 
+import com.kfwong.elvis.event.DownloadCompletedEvent
+import com.kfwong.elvis.event.DownloadingEvent
 import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.lapi.Folder
 import com.kfwong.elvis.lapi.Lapi
@@ -19,7 +21,9 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
         object : Thread() {
             override fun run() {
                 createFolder(ELVIS_HOME)
+
                 eventBus.post(MessageLogEvent("Files will be downloaded to $ELVIS_HOME"))
+                eventBus.post(DownloadingEvent())
 
                 if (isForceDownload) {
                     eventBus.post(MessageLogEvent("Running force download for all workbins..."))
@@ -52,6 +56,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) {
                 })
 
                 eventBus.post(MessageLogEvent("Download finished!"))
+                eventBus.post(DownloadCompletedEvent())
             }
         }.start()
     }
