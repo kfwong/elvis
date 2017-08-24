@@ -64,13 +64,31 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
 
             it.files.forEach {
                 val datetimeUploaded = prefs.get(it.id, null)
+                val isFileExist = File(subFolderPath + it.name).exists()
+                val isFileUpdated = it.datetimeUploaded.toString() == datetimeUploaded
 
-                if (it.datetimeUploaded.toString() == datetimeUploaded && !isForceDownload) {
-                    publishMessageLogEvent("***** Skipped ${it.name}. It is the latest copy!")
-                } else {
-                    prefs.put(it.id, it.datetimeUploaded.toString())
-                    lapi.download(it.id, it.name, subFolderPath)
-                    publishMessageLogEvent("***** Downloaded ${it.name}")
+                addFileRegistry(it.id, it.datetimeUploaded)
+
+                when {
+                    isForceDownload -> {
+                        lapi.download(it.id, it.name, subFolderPath)
+                        publishMessageLogEvent("***** Force downloading ${it.name}")
+                    }
+                    isFileExist && isFileUpdated -> {
+                        publishMessageLogEvent("***** Skipping ${it.name}. It is the latest copy!")
+                    }
+                    !isFileExist -> {
+                        lapi.download(it.id, it.name, subFolderPath)
+                        publishMessageLogEvent("***** ${it.name} not found. Re-downloading.")
+                    }
+                    !isFileUpdated -> {
+                        lapi.download(it.id, it.name, subFolderPath)
+                        publishMessageLogEvent("***** ${it.name} is out-dated. Updating.")
+                    }
+                    else -> {
+                        lapi.download(it.id, it.name, subFolderPath)
+                        publishMessageLogEvent("***** Downloading ${it.name}")
+                    }
                 }
 
             }

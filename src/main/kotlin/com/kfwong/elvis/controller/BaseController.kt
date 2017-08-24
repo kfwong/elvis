@@ -5,6 +5,7 @@ import com.kfwong.elvis.event.DownloadingEvent
 import com.kfwong.elvis.event.MessageLogEvent
 import com.kfwong.elvis.util.Constants.eventBus
 import com.kfwong.elvis.util.Constants.prefs
+import java.util.*
 
 open class BaseController {
 
@@ -26,15 +27,19 @@ open class BaseController {
         prefs.put("ELVIS_HOME", directory)
     }
 
-    fun publishMessageLogEvent(message:String){
+    fun addFileRegistry(fileId: String, date: Date) {
+        prefs.put(fileId, date.toString())
+    }
+
+    fun publishMessageLogEvent(message: String) {
         eventBus.post(MessageLogEvent(message))
     }
 
-    fun publishDownloadingEvent(){
+    fun publishDownloadingEvent() {
         eventBus.post(DownloadingEvent())
     }
 
-    fun publishDownloadCompletedEvent(){
+    fun publishDownloadCompletedEvent() {
         eventBus.post(DownloadCompletedEvent())
     }
 
