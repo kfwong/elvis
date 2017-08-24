@@ -5,6 +5,7 @@ import com.kfwong.elvis.lapi.Lapi
 import com.kfwong.elvis.util.Constants.prefs
 import java.io.File
 
+
 class ElvisController(apiKey: String, authToken: String, downloadDir: String) : BaseController() {
     private val ELVIS_HOME: String = downloadDir
     private val API_KEY = apiKey
@@ -12,10 +13,16 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
 
     private val lapi = Lapi(API_KEY, AUTH_TOKEN, ELVIS_HOME)
 
+    /**
+     * Spawn a new thread and perform download action for all modules.
+     *
+     * @param isForceDownload true to unconditionally download all files. Default is false.
+     */
     fun download(isForceDownload: Boolean = false) {
 
         object : Thread() {
             override fun run() {
+                // create download directory
                 createFolder(ELVIS_HOME)
 
                 publishMessageLogEvent("Files will be downloaded to $ELVIS_HOME")
@@ -30,6 +37,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
                 lapi.modules().fold({ m ->
 
                     m.modules.forEach {
+                        // replace slashes with dashes so it will not interfere with pathname
                         val code = it.code.replace('/', '-')
                         val moduleFolderPath = ELVIS_HOME + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
                         createFolder(moduleFolderPath)
@@ -57,6 +65,13 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
         }.start()
     }
 
+    /**
+     * Recursively download files in folders. By default it skips downloading files that are up-to-date.
+     *
+     * @param folders a collection of folders
+     * @param destDir destination directory saving to
+     * @param isForceDownload true to unconditionally download all files. Default is false.
+     */
     private fun downloadFiles(folders: Collection<Folder>, destDir: String, isForceDownload: Boolean = false) {
         folders.forEach {
             val subFolderPath = destDir + it.name + "/"
@@ -98,6 +113,11 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
         }
     }
 
+    /**
+     * Create folder if the pathname is valid
+     *
+     * @param fullPath absolute pathname
+     */
     private fun createFolder(fullPath: String) {
         val destinationDir = File(fullPath)
 
