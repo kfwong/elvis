@@ -12,7 +12,7 @@ data class Workbins(
         val workbins: Collection<Workbin>
 ) {
     class Deserializer : ResponseDeserializable<Workbins> {
-        override fun deserialize(reader: Reader): Workbins = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").create().fromJson(reader, Workbins::class.java)
+        override fun deserialize(reader: Reader): Workbins = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create().fromJson(reader, Workbins::class.java)
     }
 }
 

@@ -46,7 +46,7 @@ class Gui : View() {
     private val messageLog: TextArea by fxid()
     private val exit: Button by fxid()
 
-    lateinit var controller: ElvisController
+    private lateinit var controller: ElvisController
 
     init {
         this.title = "elvis"
