@@ -1,5 +1,6 @@
 package com.kfwong.elvis.controller
 
+import com.kfwong.elvis.event.DirectoryChangedEvent
 import com.kfwong.elvis.event.DownloadCompletedEvent
 import com.kfwong.elvis.event.DownloadingEvent
 import com.kfwong.elvis.event.MessageLogEvent
@@ -41,6 +42,10 @@ open class BaseController {
 
     fun publishDownloadCompletedEvent() {
         eventBus.post(DownloadCompletedEvent())
+    }
+
+    fun publishDirectoryChangedEvent(newPath: String) {
+        eventBus.post(DirectoryChangedEvent(newPath))
     }
 
 }
