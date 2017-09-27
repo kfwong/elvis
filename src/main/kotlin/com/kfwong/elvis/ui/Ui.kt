@@ -95,8 +95,8 @@ class Gui : View() {
         val AUTH_TOKEN: String = prefs.get("AUTH_TOKEN", "(not set)")
 
         if (AUTH_TOKEN != "(not set)") {
+            controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
             if (isForceDownload) confirm("Force Download", "This will OVERWRITE all existing files. Are you sure?", ButtonType.OK, ButtonType.CANCEL) {
-                controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
                 controller.download(isForceDownload)
             } else {
                 controller.download()
