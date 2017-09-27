@@ -32,7 +32,7 @@
                <font>
                   <Font name="System Bold" size="11.0" />
                </font></Label>
-            <Button mnemonicParsing="false" text="Action" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="CENTER" />
+            <!--<Button mnemonicParsing="false" text="Action" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="CENTER" />-->
             <Label fx:id="messageIcon" alignment="CENTER" contentDisplay="CENTER" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
