@@ -7,7 +7,7 @@ ELVIS (IVLE spelled backward with a meaningless 'S') is a batch file downloader 
 
 This application is programmed using [Kotlin](https://kotlinlang.org/) (Java "hipster" Dialect). It supports all major platforms Windows, MacOS and Linux.
 
-![elvis-ui](http://sm.uploads.im/d/9JsBa.png)
+![elvis-ui](http://sk.uploads.im/d/Rx3Bd.png)
 
 ## Prerequisite
 - Java JRE 1.8+

@@ -3,23 +3,23 @@ package com.kfwong.elvis.ui
 import com.google.common.eventbus.Subscribe
 import com.kfwong.elvis.controller.BaseController
 import com.kfwong.elvis.controller.ElvisController
-import com.kfwong.elvis.event.DirectoryChangedEvent
-import com.kfwong.elvis.event.DownloadCompletedEvent
-import com.kfwong.elvis.event.DownloadingEvent
-import com.kfwong.elvis.event.MessageLogEvent
+import com.kfwong.elvis.event.*
 import com.kfwong.elvis.util.Constants.API_KEY
 import com.kfwong.elvis.util.Constants.prefs
 import com.kfwong.elvis.util.Constants.eventBus
+import com.kfwong.elvis.event.BaseEvent.Type.*
+import de.jensd.fx.glyphs.icons525.Icons525
+import de.jensd.fx.glyphs.icons525.utils.Icon525Factory
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.*
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import tornadofx.*
-import java.awt.Desktop
-import java.io.File
+
 
 class Ui : App() {
     override val primaryView = Gui::class
@@ -44,10 +44,12 @@ class Gui : View() {
     private val download: Button by fxid()
     private val forceDownload: Button by fxid()
     private val changeDirectory: Button by fxid()
+    private val about: Button by fxid()
     private val exit: Button by fxid()
     private val downloadDirectory: Label by fxid()
-    private val messageLog: ListView<String> by fxid()
-    private val messageLogs: ObservableList<String> = FXCollections.observableArrayList<String>()
+    private val messageLog: ListView<BaseEvent> by fxid()
+    private val messageLogs: ObservableList<BaseEvent> = FXCollections.observableArrayList<BaseEvent>()
+    private val baseController: BaseController = BaseController()
 
     private lateinit var controller: ElvisController
 
@@ -57,6 +59,10 @@ class Gui : View() {
         this.messageLog.items = messageLogs
 
         eventBus.register(this)
+
+        messageLog.cellFormat {
+            graphic = MessageLogEntry(it).root
+        }
 
         login.action {
             find(Login::class).openModal()
@@ -71,7 +77,11 @@ class Gui : View() {
         }
 
         changeDirectory.action {
-            find(ChangeDirectory::class).openModal()
+            changeDirectoryAction()
+        }
+
+        about.action {
+            find(About::class).openModal()
         }
 
         exit.action {
@@ -88,14 +98,27 @@ class Gui : View() {
             controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
             controller.download(isForceDownload)
         } else {
-            controller.publishMessageLogEvent("You must login with your NUSNET account first!")
+            controller.publishMessageLogEvent("You must login with your NUSNET account first!", FAILURE)
+        }
+    }
+
+    private fun changeDirectoryAction(){
+        chooseDirectory {
+            val file = this.showDialog(primaryStage)
+
+            if (file != null) {
+                println(file.path)
+                baseController.setElvisHome(file.path + "/")
+                baseController.publishDirectoryChangedEvent(file.path + "/")
+                baseController.publishMessageLogEvent("Directory changed successfully.", SUCCESS)
+            }
         }
     }
 
     @Subscribe
     fun handleMessageLogEvent(messageLogEvent: MessageLogEvent) {
         Platform.runLater({
-            messageLogs.add(messageLogEvent.toString())
+            messageLogs.add(messageLogEvent)
             messageLog.scrollTo(messageLog.items.size - 1)
         })
     }
@@ -139,7 +162,7 @@ class Login : View() {
                 val authToken = it.substring(it.indexOf(paramName) + paramName.length)
 
                 controller.setAuthToken(authToken)
-                controller.publishMessageLogEvent("Authentication token updated successfully.")
+                controller.publishMessageLogEvent("Authentication token updated successfully.", SUCCESS)
 
                 this.close()
             }
@@ -152,36 +175,49 @@ class Login : View() {
     }
 }
 
-class ChangeDirectory : View() {
-    override val root: VBox by fxml("/fxml/ChangeDirectory.fxml")
+class About : View() {
+    override val root: AnchorPane by fxml("/fxml/About.fxml")
 
-    private val directoryPath: TextField by fxid()
-    private val directorySubmit: Button by fxid()
-    private val directoryPathError: Label by fxid()
-
-    private val controller = BaseController()
+    private val content: TextArea by fxid()
 
     init {
-        this.title = "changeDirectory"
 
-        eventBus.register(this)
+        this.content.text = "Copyright @ 2017, Wong Kang Fei under GPL-3.0 license.\n" +
+                "\n" +
+                "Source Code: https://github.com/kfwong/elvis\n" +
+                "\n" +
+                "Github Contributors' handles:\n" +
+                "@kfwong (Main author)\n" +
+                "@zavfel (Contributor)\n" +
+                "\n" +
+                "Found a bug? Send an email to me@kfwong.com or raise on issue on our Github Page!"
+    }
+}
 
-        directorySubmit.action {
-            val directory: String = directoryPath.text
-            val path = File(directory)
+// A reusable HBox with a Label inside (useless, but it gets the point across)
+class MessageLogEntry(event: BaseEvent) : Fragment() {
+    override val root: AnchorPane by fxml("/fxml/MessageLogEntry.fxml")
 
-            if (path.exists()) {
+    private val datetime: Label by fxid()
+    private val message: Label by fxid()
+    private val messageIcon: Label by fxid()
 
-                controller.setElvisHome(directoryPath.text + "/")
-                controller.publishDirectoryChangedEvent(directoryPath.text)
-                controller.publishMessageLogEvent("Directory changed successfully.")
+    init {
+        root.tooltip(event.eventMessage)
+        datetime.text = event.formattedDatetime
+        message.text = event.eventMessage
 
-                directoryPathError.text = ""
-
-                this.close()
-            } else {
-                directoryPathError.text = "Invalid Path"
-            }
+        when (event.type) {
+            INFO -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
+            WARNING -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.WARNING_SIGN, "2em")
+            CRITICAL -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.EXCLAMATION_CIRCLE, "2em")
+            IMPORTANT -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.ASTERISK2, "2em")
+            ERROR -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.FROWNING_FACE, "2em")
+            SUCCESS -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLESELECT, "2em")
+            FAILURE -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLEDELETE, "2em")
+            DOWNLOAD -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.DOWNLOAD, "2em")
+            SKIP -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.ELLIPSIS, "2em")
+            UPDATE -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.REFRESH, "2em")
         }
     }
 }

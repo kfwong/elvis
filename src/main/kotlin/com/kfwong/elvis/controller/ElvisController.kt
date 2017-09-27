@@ -1,5 +1,8 @@
 package com.kfwong.elvis.controller
 
+import com.kfwong.elvis.event.BaseEvent
+import com.kfwong.elvis.event.MessageLogEvent
+import com.kfwong.elvis.event.BaseEvent.Type.*
 import com.kfwong.elvis.lapi.Folder
 import com.kfwong.elvis.lapi.Lapi
 import com.kfwong.elvis.util.Constants.prefs
@@ -29,9 +32,9 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
                 publishDownloadingEvent()
 
                 if (isForceDownload) {
-                    publishMessageLogEvent("Running force download for all workbins...")
+                    publishMessageLogEvent("Running force download for all workbins...", IMPORTANT)
                 } else {
-                    publishMessageLogEvent("Downloading files for all workbins...")
+                    publishMessageLogEvent("Downloading files for all workbins...", DOWNLOAD)
                 }
 
                 lapi.modules().fold({ m ->
@@ -42,13 +45,13 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
                         val moduleFolderPath = ELVIS_HOME + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
                         createFolder(moduleFolderPath)
 
-                        publishMessageLogEvent("Downloading files for ${it.name}...")
+                        publishMessageLogEvent("Downloading files for ${it.name}...", DOWNLOAD)
 
                         lapi.workbins(it.id).fold({ w ->
                             w.workbins.forEach {
                                 downloadFiles(it.folders, moduleFolderPath, isForceDownload)
                             }
-                            publishMessageLogEvent("All files downloaded for ${it.name}.")
+                            publishMessageLogEvent("All files downloaded for ${it.name}.", SUCCESS)
                         }, { error ->
                             println(error)
                             System.exit(1)
@@ -59,7 +62,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
                     System.exit(1)
                 })
 
-                publishMessageLogEvent("Download finished!")
+                publishMessageLogEvent("Download finished!", SUCCESS)
                 publishDownloadCompletedEvent()
             }
         }.start()
@@ -78,8 +81,9 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
             createFolder(subFolderPath)
 
             it.files.forEach {
-                val datetimeUploaded = prefs.get(it.id, null)
+                val datetimeUploaded = prefs.get(it.id, "(no entry)")
                 val isFileExist = File(subFolderPath + it.name).exists()
+                val isFileRegistered = datetimeUploaded != "(no entry)"
                 val isFileUpdated = it.datetimeUploaded.toString() == datetimeUploaded
 
                 addFileRegistry(it.id, it.datetimeUploaded)
@@ -87,22 +91,18 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
                 when {
                     isForceDownload -> {
                         lapi.download(it.id, it.name, subFolderPath)
-                        publishMessageLogEvent("***** Force downloading ${it.name}")
+                        publishMessageLogEvent("***** Force downloading ${it.name}", DOWNLOAD)
                     }
-                    isFileExist && isFileUpdated -> {
-                        publishMessageLogEvent("***** Skipping ${it.name}. It is the latest copy!")
+                    isFileRegistered && isFileExist && isFileUpdated -> {
+                        publishMessageLogEvent("***** Skipping ${it.name}. It is the latest copy!", SKIP)
+                    }
+                    isFileRegistered && !isFileUpdated -> {
+                        lapi.download(it.id, it.name, subFolderPath)
+                        publishMessageLogEvent("***** ${it.name} is out-dated. Updating.", UPDATE)
                     }
                     !isFileExist -> {
                         lapi.download(it.id, it.name, subFolderPath)
-                        publishMessageLogEvent("***** ${it.name} not found. Re-downloading.")
-                    }
-                    !isFileUpdated -> {
-                        lapi.download(it.id, it.name, subFolderPath)
-                        publishMessageLogEvent("***** ${it.name} is out-dated. Updating.")
-                    }
-                    else -> {
-                        lapi.download(it.id, it.name, subFolderPath)
-                        publishMessageLogEvent("***** Downloading ${it.name}")
+                        publishMessageLogEvent("***** Downloading ${it.name}", DOWNLOAD)
                     }
                 }
 
@@ -123,7 +123,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
 
         if (!destinationDir.exists()) {
             if (!destinationDir.mkdir()) {
-                publishMessageLogEvent("[ERROR] Failed to create directory at $destinationDir!")
+                publishMessageLogEvent("[ERROR] Failed to create directory at $destinationDir!", ERROR)
             }
         }
     }

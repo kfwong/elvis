@@ -29,8 +29,8 @@ dependencies {
     compile 'no.tornado:tornadofx:1.7.9'
     compile 'com.google.guava:guava:23.0'
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
-    compile 'org.kordamp.ikonli:ikonli-javafx:1.9.0'
-    compile 'org.kordamp.ikonli:ikonli-fontawesome-pack:1.9.0'
+    compile 'de.jensd:fontawesomefx-commons:8.15'
+    compile 'de.jensd:fontawesomefx-icons525:3.0.0-4'
 
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile 'io.kotlintest:kotlintest:2.0.5'
