@@ -1,9 +1,7 @@
 package com.kfwong.elvis.controller
 
-import com.kfwong.elvis.event.DirectoryChangedEvent
-import com.kfwong.elvis.event.DownloadCompletedEvent
-import com.kfwong.elvis.event.DownloadingEvent
-import com.kfwong.elvis.event.MessageLogEvent
+import com.kfwong.elvis.event.*
+import com.kfwong.elvis.event.BaseEvent.Type.*
 import com.kfwong.elvis.util.Constants.eventBus
 import com.kfwong.elvis.util.Constants.prefs
 import java.util.*
@@ -32,8 +30,8 @@ open class BaseController {
         prefs.put(fileId, date.toString())
     }
 
-    fun publishMessageLogEvent(message: String) {
-        eventBus.post(MessageLogEvent(message))
+    fun publishMessageLogEvent(message: String, type: BaseEvent.Type = INFO) {
+        eventBus.post(MessageLogEvent(message, type))
     }
 
     fun publishDownloadingEvent() {

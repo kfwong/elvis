@@ -7,6 +7,7 @@ import com.kfwong.elvis.event.*
 import com.kfwong.elvis.util.Constants.API_KEY
 import com.kfwong.elvis.util.Constants.prefs
 import com.kfwong.elvis.util.Constants.eventBus
+import com.kfwong.elvis.event.BaseEvent.Type.*
 import de.jensd.fx.glyphs.icons525.Icons525
 import de.jensd.fx.glyphs.icons525.utils.Icon525Factory
 import javafx.application.Platform
@@ -15,12 +16,11 @@ import javafx.collections.ObservableList
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import tornadofx.*
 import java.io.File
-import java.util.*
+
 
 class Ui : App() {
     override val primaryView = Gui::class
@@ -93,7 +93,7 @@ class Gui : View() {
             controller = ElvisController(API_KEY, AUTH_TOKEN, ELVIS_HOME)
             controller.download(isForceDownload)
         } else {
-            controller.publishMessageLogEvent("You must login with your NUSNET account first!")
+            controller.publishMessageLogEvent("You must login with your NUSNET account first!", FAILURE)
         }
     }
 
@@ -144,7 +144,7 @@ class Login : View() {
                 val authToken = it.substring(it.indexOf(paramName) + paramName.length)
 
                 controller.setAuthToken(authToken)
-                controller.publishMessageLogEvent("Authentication token updated successfully.")
+                controller.publishMessageLogEvent("Authentication token updated successfully.", SUCCESS)
 
                 this.close()
             }
@@ -179,7 +179,7 @@ class ChangeDirectory : View() {
 
                 controller.setElvisHome(directoryPath.text + "/")
                 controller.publishDirectoryChangedEvent(directoryPath.text)
-                controller.publishMessageLogEvent("Directory changed successfully.")
+                controller.publishMessageLogEvent("Directory changed successfully.", SUCCESS)
 
                 directoryPathError.text = ""
 
@@ -204,11 +204,17 @@ class MessageLogEntry(event: BaseEvent) : Fragment() {
         datetime.text = event.formattedDatetime
         message.text = event.eventMessage
 
-        when(event){
-            is DirectoryChangedEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
-            is DownloadCompletedEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLESELECT, "2em")
-            is DownloadingEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLE_DOWNLOAD, "2em")
-            is MessageLogEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
+        when(event.type){
+            INFO -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
+            WARNING -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.WARNING_SIGN, "2em")
+            CRITICAL -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.EXCLAMATION_CIRCLE, "2em")
+            IMPORTANT -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.ASTERISK2, "2em")
+            ERROR -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.FROWNING_FACE, "2em")
+            SUCCESS -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLESELECT, "2em")
+            FAILURE -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLEDELETE, "2em")
+            DOWNLOAD -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.DOWNLOAD, "2em")
+            SKIP -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.ELLIPSIS, "2em")
+            UPDATE -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.REFRESH, "2em")
         }
     }
 }
