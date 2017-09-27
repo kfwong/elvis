@@ -19,8 +19,6 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import tornadofx.*
-import java.io.File
-import javax.xml.soap.Text
 
 
 class Ui : App() {
@@ -51,6 +49,7 @@ class Gui : View() {
     private val downloadDirectory: Label by fxid()
     private val messageLog: ListView<BaseEvent> by fxid()
     private val messageLogs: ObservableList<BaseEvent> = FXCollections.observableArrayList<BaseEvent>()
+    private val baseController: BaseController = BaseController()
 
     private lateinit var controller: ElvisController
 
@@ -78,7 +77,7 @@ class Gui : View() {
         }
 
         changeDirectory.action {
-            find(ChangeDirectory::class).openModal()
+            changeDirectoryAction()
         }
 
         about.action {
@@ -100,6 +99,19 @@ class Gui : View() {
             controller.download(isForceDownload)
         } else {
             controller.publishMessageLogEvent("You must login with your NUSNET account first!", FAILURE)
+        }
+    }
+
+    private fun changeDirectoryAction(){
+        chooseDirectory {
+            val file = this.showDialog(primaryStage)
+
+            if (file != null) {
+                println(file.path)
+                baseController.setElvisHome(file.path + "/")
+                baseController.publishDirectoryChangedEvent(file.path + "/")
+                baseController.publishMessageLogEvent("Directory changed successfully.", SUCCESS)
+            }
         }
     }
 
@@ -160,40 +172,6 @@ class Login : View() {
 
         webView.engine.load(loginUrl)
 
-    }
-}
-
-class ChangeDirectory : View() {
-    override val root: VBox by fxml("/fxml/ChangeDirectory.fxml")
-
-    private val directoryPath: TextField by fxid()
-    private val directorySubmit: Button by fxid()
-    private val directoryPathError: Label by fxid()
-
-    private val controller = BaseController()
-
-    init {
-        this.title = "changeDirectory"
-
-        eventBus.register(this)
-
-        directorySubmit.action {
-            val directory: String = directoryPath.text
-            val path = File(directory)
-
-            if (path.exists()) {
-
-                controller.setElvisHome(directoryPath.text + "/")
-                controller.publishDirectoryChangedEvent(directoryPath.text)
-                controller.publishMessageLogEvent("Directory changed successfully.", SUCCESS)
-
-                directoryPathError.text = ""
-
-                this.close()
-            } else {
-                directoryPathError.text = "Invalid Path"
-            }
-        }
     }
 }
 
