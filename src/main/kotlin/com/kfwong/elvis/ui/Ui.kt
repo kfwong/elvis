@@ -3,23 +3,24 @@ package com.kfwong.elvis.ui
 import com.google.common.eventbus.Subscribe
 import com.kfwong.elvis.controller.BaseController
 import com.kfwong.elvis.controller.ElvisController
-import com.kfwong.elvis.event.DirectoryChangedEvent
-import com.kfwong.elvis.event.DownloadCompletedEvent
-import com.kfwong.elvis.event.DownloadingEvent
-import com.kfwong.elvis.event.MessageLogEvent
+import com.kfwong.elvis.event.*
 import com.kfwong.elvis.util.Constants.API_KEY
 import com.kfwong.elvis.util.Constants.prefs
 import com.kfwong.elvis.util.Constants.eventBus
+import de.jensd.fx.glyphs.icons525.Icons525
+import de.jensd.fx.glyphs.icons525.utils.Icon525Factory
 import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.*
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import tornadofx.*
-import java.awt.Desktop
 import java.io.File
+import java.util.*
 
 class Ui : App() {
     override val primaryView = Gui::class
@@ -46,8 +47,8 @@ class Gui : View() {
     private val changeDirectory: Button by fxid()
     private val exit: Button by fxid()
     private val downloadDirectory: Label by fxid()
-    private val messageLog: ListView<String> by fxid()
-    private val messageLogs: ObservableList<String> = FXCollections.observableArrayList<String>()
+    private val messageLog: ListView<BaseEvent> by fxid()
+    private val messageLogs: ObservableList<BaseEvent> = FXCollections.observableArrayList<BaseEvent>()
 
     private lateinit var controller: ElvisController
 
@@ -57,6 +58,10 @@ class Gui : View() {
         this.messageLog.items = messageLogs
 
         eventBus.register(this)
+
+        messageLog.cellFormat {
+            graphic = MessageLogEntry(it).root
+        }
 
         login.action {
             find(Login::class).openModal()
@@ -95,7 +100,7 @@ class Gui : View() {
     @Subscribe
     fun handleMessageLogEvent(messageLogEvent: MessageLogEvent) {
         Platform.runLater({
-            messageLogs.add(messageLogEvent.toString())
+            messageLogs.add(messageLogEvent)
             messageLog.scrollTo(messageLog.items.size - 1)
         })
     }
@@ -182,6 +187,28 @@ class ChangeDirectory : View() {
             } else {
                 directoryPathError.text = "Invalid Path"
             }
+        }
+    }
+}
+
+// A reusable HBox with a Label inside (useless, but it gets the point across)
+class MessageLogEntry(event: BaseEvent) : Fragment() {
+    override val root: AnchorPane by fxml("/fxml/MessageLogEntry.fxml")
+
+    private val datetime: Label by fxid()
+    private val message:Label by fxid()
+    private val messageIcon:Label by fxid()
+
+    init{
+        root.tooltip(event.eventMessage)
+        datetime.text = event.formattedDatetime
+        message.text = event.eventMessage
+
+        when(event){
+            is DirectoryChangedEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
+            is DownloadCompletedEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLESELECT, "2em")
+            is DownloadingEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLE_DOWNLOAD, "2em")
+            is MessageLogEvent -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
         }
     }
 }
