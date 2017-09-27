@@ -20,6 +20,7 @@
                         <Button fx:id="login" mnemonicParsing="false" text="Login"/>
                         <Button fx:id="download" mnemonicParsing="false" text="Download"/>
                         <Button fx:id="forceDownload" mnemonicParsing="false" text="Force Download"/>
+                        <Button fx:id="about" mnemonicParsing="false" text="About"/>
                         <Button fx:id="exit" mnemonicParsing="false" text="Exit"/>
                     </items>
                 </ToolBar>

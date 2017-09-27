@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 import tornadofx.*
 import java.io.File
+import javax.xml.soap.Text
 
 
 class Ui : App() {
@@ -45,6 +46,7 @@ class Gui : View() {
     private val download: Button by fxid()
     private val forceDownload: Button by fxid()
     private val changeDirectory: Button by fxid()
+    private val about: Button by fxid()
     private val exit: Button by fxid()
     private val downloadDirectory: Label by fxid()
     private val messageLog: ListView<BaseEvent> by fxid()
@@ -77,6 +79,10 @@ class Gui : View() {
 
         changeDirectory.action {
             find(ChangeDirectory::class).openModal()
+        }
+
+        about.action {
+            find(About::class).openModal()
         }
 
         exit.action {
@@ -191,20 +197,39 @@ class ChangeDirectory : View() {
     }
 }
 
+class About : View() {
+    override val root: AnchorPane by fxml("/fxml/About.fxml")
+
+    private val content: TextArea by fxid()
+
+    init {
+
+        this.content.text = "Copyright @ 2017, Wong Kang Fei under GPL-3.0 license.\n" +
+                "\n" +
+                "Source Code: https://github.com/kfwong/elvis\n" +
+                "\n" +
+                "Github Contributors' handles:\n" +
+                "@kfwong (Main author)\n" +
+                "@zavfel (Contributor)\n" +
+                "\n" +
+                "Found a bug? Send an email to me@kfwong.com or raise on issue on our Github Page!"
+    }
+}
+
 // A reusable HBox with a Label inside (useless, but it gets the point across)
 class MessageLogEntry(event: BaseEvent) : Fragment() {
     override val root: AnchorPane by fxml("/fxml/MessageLogEntry.fxml")
 
     private val datetime: Label by fxid()
-    private val message:Label by fxid()
-    private val messageIcon:Label by fxid()
+    private val message: Label by fxid()
+    private val messageIcon: Label by fxid()
 
-    init{
+    init {
         root.tooltip(event.eventMessage)
         datetime.text = event.formattedDatetime
         message.text = event.eventMessage
 
-        when(event.type){
+        when (event.type) {
             INFO -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
             WARNING -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.WARNING_SIGN, "2em")
             CRITICAL -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.EXCLAMATION_CIRCLE, "2em")
