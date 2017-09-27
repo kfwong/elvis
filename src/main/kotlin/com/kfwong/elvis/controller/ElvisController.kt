@@ -42,7 +42,7 @@ class ElvisController(apiKey: String, authToken: String, downloadDir: String) : 
                     m.modules.forEach {
                         // replace slashes with dashes so it will not interfere with pathname
                         val code = it.code.replace('/', '-')
-                        val moduleFolderPath = ELVIS_HOME + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
+                        val moduleFolderPath = ELVIS_HOME + "/" + code.toUpperCase() + " " + it.name.toUpperCase() + "/"
                         createFolder(moduleFolderPath)
 
                         publishMessageLogEvent("Downloading files for ${it.name}...", DOWNLOAD)

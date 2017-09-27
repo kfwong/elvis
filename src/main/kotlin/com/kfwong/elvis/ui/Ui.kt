@@ -103,15 +103,12 @@ class Gui : View() {
     }
 
     private fun changeDirectoryAction(){
-        chooseDirectory {
-            val file = this.showDialog(primaryStage)
+        val file = chooseDirectory()
 
-            if (file != null) {
-                println(file.path)
-                baseController.setElvisHome(file.path + "/")
-                baseController.publishDirectoryChangedEvent(file.path + "/")
-                baseController.publishMessageLogEvent("Directory changed successfully.", SUCCESS)
-            }
+        if (file != null) {
+            baseController.setElvisHome(file.path)
+            baseController.publishDirectoryChangedEvent(file.path)
+            baseController.publishMessageLogEvent("Directory changed successfully.", SUCCESS)
         }
     }
 
