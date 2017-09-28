@@ -1,0 +1,105 @@
+.button{
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #62727b;
+    -fx-border-radius: 10;
+    -fx-padding: 3 12 3 12;
+    -fx-background-radius: 10;
+    -fx-font-family: monospace;
+}
+
+.tool-bar{
+    -fx-background-color: #37474f;
+}
+
+.indexed-cell{
+    -fx-background-color: #263238;
+    -fx-text-fill: #ffffff;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-border-color: #00acc1;
+    -fx-border-width: 0 0 0 10;
+    -fx-background-color: #102027;
+}
+
+.list-cell .label{
+    -fx-text-fill: white;
+    -fx-font-family: monospace;
+}
+
+.list-view, .list-view:focused{
+    -fx-background-color: #263238;
+}
+
+.separator:vertical .line{
+    -fx-border-color: #37474f;
+
+}
+
+.scroll-bar{
+    -fx-background-color: #102027;
+}
+
+.scroll-bar .thumb{
+    -fx-background-color: #00acc1;
+}
+
+.ICON_INFO{
+    -fx-fill: #0288d1;
+}
+
+.ICON_WARNING{
+    -fx-fill: #f57c00;
+}
+
+.ICON_CRITICAL{
+    -fx-fill: #e64a19;
+}
+
+.ICON_IMPORTANT{
+    -fx-fill: #ae52d4;
+}
+
+.ICON_ERROR{
+    -fx-fill: #d32f2f;
+}
+
+.ICON_SUCCESS{
+    -fx-fill: #689f38;
+}
+
+.ICON_FAILURE{
+    -fx-fill: #d32f2f;
+}
+
+.ICON_DOWNLOAD{
+    -fx-fill: #0097a7
+}
+
+.ICON_SKIP{
+    -fx-fill: #f57c00;
+}
+
+.ICON_UPDATE{
+    -fx-fill: #fbc02d;
+}
+
+.message-log-entry-datetime{
+    -fx-text-fill: #62727b;
+    -fx-font-style: italic;
+    -fx-font-size: 10;
+}
+
+.download-directory-label, .download-directory-value{
+    -fx-text-fill: #ffffff;
+    -fx-font-family: monospace;
+}
+
+.logo{
+    -fx-background-color: #263238;
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 6 12 6 12;
+}

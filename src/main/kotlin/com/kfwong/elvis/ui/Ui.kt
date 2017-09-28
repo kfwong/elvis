@@ -17,12 +17,15 @@ import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
+import javafx.scene.text.Text
 import javafx.scene.web.WebView
+import javafx.stage.StageStyle
 import tornadofx.*
 
-
-class Ui : App() {
-    override val primaryView = Gui::class
+class Ui : App(Gui::class) {
+    init {
+        importStylesheet("/css/main.css")
+    }
 
     override fun onBeforeShow(view: UIComponent) {
         super.onBeforeShow(view)
@@ -57,6 +60,7 @@ class Gui : View() {
         this.title = "elvis"
         this.downloadDirectory.text = prefs.get("ELVIS_HOME", "(not set)")
         this.messageLog.items = messageLogs
+        this.primaryStage.initStyle(StageStyle.UNDECORATED)
 
         eventBus.register(this)
 
@@ -208,17 +212,59 @@ class MessageLogEntry(event: BaseEvent) : Fragment() {
         datetime.text = event.formattedDatetime
         message.text = event.eventMessage
 
+        val icon: Text
+
         when (event.type) {
-            INFO -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
-            WARNING -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.WARNING_SIGN, "2em")
-            CRITICAL -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.EXCLAMATION_CIRCLE, "2em")
-            IMPORTANT -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.ASTERISK2, "2em")
-            ERROR -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.FROWNING_FACE, "2em")
-            SUCCESS -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLESELECT, "2em")
-            FAILURE -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.CIRCLEDELETE, "2em")
-            DOWNLOAD -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.DOWNLOAD, "2em")
-            SKIP -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.ELLIPSIS, "2em")
-            UPDATE -> messageIcon.graphic = Icon525Factory.get().createIcon(Icons525.REFRESH, "2em")
+            INFO -> {
+                icon = Icon525Factory.get().createIcon(Icons525.INFO_CIRCLE, "2em")
+                icon.styleClass.add("ICON_INFO")
+                messageIcon.graphic = icon
+            }
+            WARNING -> {
+                icon = Icon525Factory.get().createIcon(Icons525.WARNING_SIGN, "2em")
+                icon.styleClass.add("ICON_WARNING")
+                messageIcon.graphic = icon
+            }
+            CRITICAL -> {
+                icon = Icon525Factory.get().createIcon(Icons525.EXCLAMATION_CIRCLE, "2em")
+                icon.styleClass.add("ICON_CRITICAL")
+                messageIcon.graphic = icon
+            }
+            IMPORTANT -> {
+                icon = Icon525Factory.get().createIcon(Icons525.ASTERISK2, "2em")
+                icon.styleClass.add("ICON_IMPORTANT")
+                messageIcon.graphic = icon
+            }
+            ERROR -> {
+                icon = Icon525Factory.get().createIcon(Icons525.FROWNING_FACE, "2em")
+                icon.styleClass.add("ICON_ERROR")
+                messageIcon.graphic = icon
+            }
+            SUCCESS -> {
+                icon = Icon525Factory.get().createIcon(Icons525.CIRCLESELECT, "2em")
+                icon.styleClass.add("ICON_SUCCESS")
+                messageIcon.graphic = icon
+            }
+            FAILURE -> {
+                icon = Icon525Factory.get().createIcon(Icons525.CIRCLEDELETE, "2em")
+                icon.styleClass.add("ICON_FAILURE")
+                messageIcon.graphic = icon
+            }
+            DOWNLOAD -> {
+                icon = Icon525Factory.get().createIcon(Icons525.DOWNLOAD, "2em")
+                icon.styleClass.add("ICON_DOWNLOAD")
+                messageIcon.graphic = icon
+            }
+            SKIP -> {
+                icon = Icon525Factory.get().createIcon(Icons525.ELLIPSIS, "2em")
+                icon.styleClass.add("ICON_SKIP")
+                messageIcon.graphic = icon
+            }
+            UPDATE -> {
+                icon = Icon525Factory.get().createIcon(Icons525.REFRESH, "2em")
+                icon.styleClass.add("ICON_UPDATE")
+                messageIcon.graphic = icon
+            }
         }
     }
 }
