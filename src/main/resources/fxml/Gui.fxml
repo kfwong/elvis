@@ -17,6 +17,8 @@
             <children>
                 <ToolBar prefHeight="40.0" prefWidth="200.0">
                     <items>
+                        <Label styleClass="logo" text="ELVIS"/>
+                        <Separator orientation="VERTICAL"/>
                         <Button fx:id="login" mnemonicParsing="false" text="Login"/>
                         <Button fx:id="download" mnemonicParsing="false" text="Download"/>
                         <Button fx:id="forceDownload" mnemonicParsing="false" text="Force Download"/>
@@ -32,8 +34,8 @@
             <items>
                 <Button fx:id="changeDirectory" mnemonicParsing="false" text="Change" />
                 <Separator orientation="VERTICAL"/>
-                <Label text="Download Directory:" />
-                <Label fx:id="downloadDirectory" text="(not set)" />
+                <Label styleClass="download-directory-label" text="Download Directory:" />
+                <Label fx:id="downloadDirectory" styleClass="download-directory-value" text="(not set)" />
             </items>
         </ToolBar>
     </bottom>

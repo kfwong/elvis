@@ -3,11 +3,11 @@
 ![travis-ci](https://travis-ci.org/kfwong/elvis.svg?branch=master)
 ![downloads-count](https://badged.co/kfwong/elvis/total)
 
-ELVIS (IVLE spelled backward with a meaningless 'S') is a batch file downloader for workbins in the IVLE platform. 
+ELVIS (IVLE spelled backward) is a batch file downloader for workbins in the IVLE platform. 
 
-This application is programmed using [Kotlin](https://kotlinlang.org/) (Java "hipster" Dialect). It supports all major platforms Windows, MacOS and Linux.
+This application is programmed with [Kotlin](https://kotlinlang.org/). It supports all major platforms Windows, MacOS and Linux.
 
-![elvis-ui](http://sk.uploads.im/d/Rx3Bd.png)
+![elvis-ui](http://sj.uploads.im/d/tCTVy.png)
 
 ## Prerequisite
 - Java JRE 1.8+
