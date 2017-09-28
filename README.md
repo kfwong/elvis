@@ -34,4 +34,4 @@ $ java -jar <my-elvis-app>.jar
 ## Developers & Designer Wanted!
 This project started in August 2017 just before the new semester starts. It is still in infancy so there's a lot of improvement can be made!
 
-If you are interested in contributing to this project, we invite you to read up [this document](https://github.com/kfwong/elvis/blob/master/doc/developer-manual.md)!
+If you are interested in contributing to this project, we invite you to read up [this document](https://github.com/kfwong/elvis/blob/master/CONTRIBUTING.md)!
