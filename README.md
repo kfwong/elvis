@@ -7,7 +7,7 @@ ELVIS (IVLE spelled backward) is a batch file downloader for workbins in the IVL
 
 This application is programmed with [Kotlin](https://kotlinlang.org/). It supports all major platforms Windows, MacOS and Linux.
 
-![elvis-ui](http://sk.uploads.im/d/Rx3Bd.png)
+![elvis-ui](http://sj.uploads.im/d/tCTVy.png)
 
 ## Prerequisite
 - Java JRE 1.8+
